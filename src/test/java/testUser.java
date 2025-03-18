@@ -9,15 +9,15 @@ import io.restassured.response.Response;
 
 
 public class testUser {
-    static  String contentType = "application/json";
-    static  String urlUser = "https://petstore.swagger.io/v2/user";
+    static String contentType = "application/json";
+    static String urlUser = "https://petstore.swagger.io/v2/user";
+    static String token;
 
     @Test
-    public void testeLogin() {
+    public static String testLogin() {
 
         String userName = "sergio";
         String passWord = "123456";
-
         String resultadoEsperado = "logged in user session:";
 
         Response resposta = (Response)
@@ -35,7 +35,8 @@ public class testUser {
         .extract()
         ;
 
-        String token = resposta.jsonPath().getString("message").substring(23);
+        token = resposta.jsonPath().getString("message").substring(23);
         System.out.println("O token é: " + token);
+        return token;
     }
 }

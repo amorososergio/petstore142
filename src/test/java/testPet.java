@@ -7,8 +7,13 @@ import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvFileSource;
+
+import com.google.gson.Gson;
 
 import static io.restassured.RestAssured.given;
+
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class testPet {
@@ -52,6 +57,7 @@ public class testPet {
         given()
             .contentType(contentType)
             .log().all()
+            .header("api_key: ", testUser.testLogin())
         .when()
             .get(urlPet + "/" + petId)
         .then()
@@ -102,5 +108,42 @@ public class testPet {
         ;
     }
 
-    
+    //DDT - Teste com Massa
+    @ParameterizedTest @Order(5)
+    @CsvFileSource(resources = "/csv/petMassa.csv", numLinesToSkip = 1, delimiter = ',')
+    public void testPostPetDDT(
+        int petId,
+        String petName,
+        int catId,
+        String catName,
+        String status1,
+        String status2
+        ) {
+
+        Pet pet = new Pet();
+        pet.petId = petId;
+        pet.petName = petName;
+        pet.catId = catId;
+        pet.catName = catName;
+        pet.status = status1;
+
+        Gson gson = new Gson();
+        String jsonBody = gson.toJson(pet);
+
+        given()
+            .contentType(contentType)
+            .log().all()
+            .body(jsonBody)
+        .when()
+            .post(urlPet)
+        .then()
+            .log().all()
+            .statusCode(200)
+            .body("id", is((petId)))
+            .body("name", is(petName))
+            .body("category.id", is((catId)))
+            .body("category.name", is(catName))
+            .body("status", is(status1))
+        ;
+    }
 }
