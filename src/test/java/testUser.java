@@ -1,61 +1,41 @@
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.hasLength;
 import static org.hamcrest.Matchers.is;
 import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
+import io.restassured.response.Response;
+
 
 public class testUser {
-    static  String ct = "application/json";
-    static  String urlPet = "https://petstore.swagger.io/v2/pet";
-    int petId = 15899999;
-    String petName = "Kiara";
-    String categryName = "cachorro";
-    String tagName = "vacinado";
-
-    public static String lerArquivoJson(String arquivoJson) throws IOException {
-    return new String(Files.readAllBytes(Paths.get(arquivoJson)));
-    }
+    static  String contentType = "application/json";
+    static  String urlUser = "https://petstore.swagger.io/v2/user";
 
     @Test
-    public void testPostPet() throws IOException {
-        String jsonBody = lerArquivoJson("src/test/resources/json/pet1.json");
-        
+    public void testeLogin() {
+
+        String userName = "sergio";
+        String passWord = "123456";
+
+        String resultadoEsperado = "logged in user session:";
+
+        Response resposta = (Response)
         given()
-            .contentType(ct)
+            .contentType(contentType)
             .log().all()
-            .body(jsonBody)
         .when()
-            .post(urlPet)
+            .get(urlUser + "/login?username="+ userName +"&password="+ passWord)
         .then()
             .log().all()
             .statusCode(200)
-            .body("name", is("Kiara"))
-            .body("id", is(petId))
-            .body("status", is("available"))
-            .body("category.name", is("cachorro"))
-            .body("tags[0].name", is("vacinado"))
+            .body("type", is("unknown"))
+            .body("message", containsString(resultadoEsperado))
+            .body("message", hasLength(36))
+        .extract()
         ;
-    }
 
-    @Test
-    public void testGetPet() {
-
-        given()
-            .contentType(ct)
-            .log().all()
-        .when()
-            .get(urlPet + "/" + petId)
-        .then()
-            .log().all()
-            .statusCode(200)
-            .body("name", is("Kiara"))
-            .body("id", is(petId))
-            .body("status", is("available"))
-            .body("category.name", is("cachorro"))
-            .body("tags[0].name", is("vacinado"))
-        ;
+        String token = resposta.jsonPath().getString("message").substring(23);
+        System.out.println("O token é: " + token);
     }
 }

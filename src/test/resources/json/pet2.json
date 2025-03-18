@@ -1,0 +1,18 @@
+{
+    "id": 15899999,
+    "category": {
+      "id": 1,
+      "name": "cachorro"
+    },
+    "name": "Kiara",
+    "photoUrls": [
+      "string"
+    ],
+    "tags": [
+      {
+        "id": 9,
+        "name": "vacinado"
+      }
+    ],
+    "status": "sold"
+  }
