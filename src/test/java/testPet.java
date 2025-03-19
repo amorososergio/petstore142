@@ -107,6 +107,7 @@ public class testPet {
             .body("message", is("15899999"))
         ;
     }
+    
 
     //DDT - Teste com Massa
     @ParameterizedTest @Order(5)
@@ -121,10 +122,17 @@ public class testPet {
         ) {
 
         Pet pet = new Pet();
-        pet.petId = petId;
-        pet.petName = petName;
-        pet.catId = catId;
-        pet.catName = catName;
+        Pet.category category = pet.new category();
+        Pet.tag tag[] = {pet.new tag()};
+
+        pet.id = petId;
+        pet.name = petName;
+        pet.category = category;
+        pet.category.id = catId;
+        pet.category.name = catName;
+        pet.tags = tag;
+        pet.tags[0].id = 9;
+        pet.tags[0].name = "vacinado";	
         pet.status = status1;
 
         Gson gson = new Gson();
